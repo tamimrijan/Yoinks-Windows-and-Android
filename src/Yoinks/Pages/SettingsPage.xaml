@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Yoinks.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Transparent">
+
+    <Page.Resources>
+        <Style x:Key="RowIcon" TargetType="Border">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Background" Value="{ThemeResource GlassInnerBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel x:Name="ContentPanel" Spacing="4">
+            <TextBlock Text="Settings" Style="{StaticResource PageTitleStyle}" Margin="0,0,0,12" />
+
+            <!-- appearance -->
+            <TextBlock Text="Appearance" Style="{StaticResource SectionHeaderStyle}" Margin="4,0,0,8" />
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE790;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="App theme" />
+                        <TextBlock Text="Light, dark, or follow Windows" Style="{StaticResource SecondaryTextStyle}" />
+                    </StackPanel>
+                    <ComboBox x:Name="ThemeBox" Grid.Column="2" MinWidth="170" VerticalAlignment="Center" SelectionChanged="Theme_Changed">
+                        <ComboBoxItem Content="Use system setting" Tag="System" />
+                        <ComboBoxItem Content="Light" Tag="Light" />
+                        <ComboBoxItem Content="Dark" Tag="Dark" />
+                    </ComboBox>
+                </Grid>
+            </Border>
+
+            <!-- downloads -->
+            <TextBlock Text="Downloads" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16" RowSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE8B7;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Save videos to" />
+                        <TextBlock x:Name="FolderText" Style="{StaticResource SecondaryTextStyle}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <Button x:Name="ResetFolderButton" Content="Reset" Click="ResetFolder_Click" />
+                        <Button Content="Change..." Click="ChangeFolder_Click" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE838;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Show the file when done" />
+                        <TextBlock Text="Opens File Explorer with the new file selected" Style="{StaticResource SecondaryTextStyle}" />
+                    </StackPanel>
+                    <ToggleSwitch x:Name="OpenFolderSwitch" Grid.Column="2" OnContent="" OffContent="" MinWidth="0" Toggled="Toggle_Changed" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE77F;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Offer links from the clipboard" />
+                        <TextBlock Text="When you copy a video link, Yoinks offers to paste it" Style="{StaticResource SecondaryTextStyle}" />
+                    </StackPanel>
+                    <ToggleSwitch x:Name="ClipboardSwitch" Grid.Column="2" OnContent="" OffContent="" MinWidth="0" Toggled="Toggle_Changed" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE81C;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Keep a download history" />
+                        <TextBlock Text="Lists what you yoinked on the Downloads page. Stored only on this PC." Style="{StaticResource SecondaryTextStyle}" />
+                    </StackPanel>
+                    <ToggleSwitch x:Name="HistorySwitch" Grid.Column="2" OnContent="" OffContent="" MinWidth="0" Toggled="Toggle_Changed" />
+                </Grid>
+            </Border>
+
+            <!-- components -->
+            <TextBlock Text="Components" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE896;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="yt-dlp (download engine)" />
+                        <TextBlock x:Name="YtDlpText" Text="Checking..." Style="{StaticResource SecondaryTextStyle}" />
+                        <ProgressBar x:Name="YtDlpProgress" Visibility="Collapsed" Margin="0,6,0,0" Maximum="1" />
+                    </StackPanel>
+                    <Button x:Name="YtDlpButton" Grid.Column="2" Content="Update" Click="UpdateYtDlp_Click" VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE943;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="JavaScript runtime (Deno)" />
+                        <TextBlock x:Name="DenoText" Text="Checking..." Style="{StaticResource SecondaryTextStyle}" />
+                        <ProgressBar x:Name="DenoProgress" Visibility="Collapsed" Margin="0,6,0,0" Maximum="1" />
+                    </StackPanel>
+                    <Button x:Name="DenoButton" Grid.Column="2" Content="Install" Click="InstallDeno_Click" VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE7F6;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="FFmpeg (merging and mp3)" />
+                        <TextBlock x:Name="FfmpegText" Text="Checking..." Style="{StaticResource SecondaryTextStyle}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- browser -->
+            <TextBlock Text="Browser" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE774;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="&quot;Yoink this&quot; bookmark" />
+                        <TextBlock Style="{StaticResource SecondaryTextStyle}"
+                                   Text="Copy this, then add a new bookmark in your browser and paste it as the URL. Click the bookmark on any video page to send it straight to Yoinks." />
+                        <TextBlock x:Name="ProtocolWarning" Visibility="Collapsed" Margin="0,4,0,0" FontSize="12" TextWrapping="Wrap"
+                                   Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                                   Text="Browser links were not enabled in the installer. Run the installer again and tick &quot;Let your browser send links to Yoinks&quot;." />
+                    </StackPanel>
+                    <Button x:Name="CopyBookmarkButton" Grid.Column="2" Content="Copy bookmark" Click="CopyBookmark_Click" VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+
+            <!-- data -->
+            <TextBlock Text="Your data" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource GlassRowStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource RowIcon}"><FontIcon Glyph="&#xE8B7;" FontSize="16" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Settings and history folder" />
+                        <TextBlock x:Name="DataText" Style="{StaticResource SecondaryTextStyle}" />
+                    </StackPanel>
+                    <Button Grid.Column="2" Content="Open" Click="OpenData_Click" VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
