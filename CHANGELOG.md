@@ -1,5 +1,17 @@
 # Changelog
 
+## Android 1.0.0 - Yoinks comes to your phone
+
+- Native Android app built with Jetpack Compose and Material 3 Expressive
+- Same flow as Windows: paste a link, pick a resolution or MP3, download
+- Share to Yoinks from YouTube, Instagram, TikTok, the browser or any app
+- Downloads keep going in the background, with progress and Cancel in notifications
+- Saves to Download/Yoinks so videos show up in Gallery and songs in music apps
+- Expressive design: cookie and sunny shapes, wavy progress ring, shape-morphing buttons,
+  spring motion, floating pill navigation, light and dark mode, optional Material You colours
+- Built-in engine (Python, yt-dlp, FFmpeg, QuickJS), with yt-dlp updates from Settings
+- Downloads tab with search, play, share, yoink again; About page with links to the author
+
 ## 1.0.0 - first release
 
 Yoinks comes to Windows as a native desktop app.

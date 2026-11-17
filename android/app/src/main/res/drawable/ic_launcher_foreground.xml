@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- the Claw, drawn on a 120 grid and scaled into the adaptive-icon safe zone -->
+    <group android:scaleX="0.68" android:scaleY="0.68" android:translateX="13.2" android:translateY="19.32">
+        <path android:fillColor="#FFFFFF" android:pathData="M59,10h2a3,3 0 0 1 3,3v16a3,3 0 0 1 -3,3h-2a3,3 0 0 1 -3,-3v-16a3,3 0 0 1 3,-3z" />
+        <path android:fillColor="#FFFFFF" android:pathData="M48.5,29h23a6.5,6.5 0 0 1 0,13h-23a6.5,6.5 0 0 1 0,-13z" />
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="7" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M48,41 C30,52 30,76 44,89 L51,84" />
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="7" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M72,41 C90,52 90,76 76,89 L69,84" />
+        <path android:strokeWidth="6" android:strokeLineJoin="round" android:pathData="M52,55 L74,68 L52,81 Z">
+            <aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="46" android:startY="50" android:endX="80" android:endY="86"><item android:offset="0" android:color="#FFFF375F" /><item android:offset="0.5" android:color="#FFAF52DE" /><item android:offset="1" android:color="#FF0A84FF" /></gradient></aapt:attr>
+            <aapt:attr name="android:strokeColor"><gradient android:type="linear" android:startX="46" android:startY="50" android:endX="80" android:endY="86"><item android:offset="0" android:color="#FFFF375F" /><item android:offset="0.5" android:color="#FFAF52DE" /><item android:offset="1" android:color="#FF0A84FF" /></gradient></aapt:attr>
+        </path>
+    </group>
+</vector>

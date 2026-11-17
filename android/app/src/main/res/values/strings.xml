@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Yoinks</string>
+    <string name="share_label">Yoink it</string>
+    <string name="channel_downloads">Downloads</string>
+    <string name="channel_downloads_desc">Progress of the video you\'re yoinking</string>
+</resources>
