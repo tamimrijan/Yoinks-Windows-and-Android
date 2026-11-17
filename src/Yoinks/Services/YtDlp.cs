@@ -184,6 +184,9 @@ public static class YtDlp
                 {
                     "-f", $"bv*[height={height}]+ba/b[height={height}]/bv*[height<={height}]+ba/b",
                     "--merge-output-format", "mp4",
+                    // prefer H.264 + AAC: plays everywhere (yt-dlp would otherwise pick AV1 + Opus,
+                    // which Windows 10 can't play without an extra codec)
+                    "-S", "res,vcodec:h264,acodec:aac",
                 },
             });
         }
@@ -195,7 +198,7 @@ public static class YtDlp
                 Label = "Best available",
                 Detail = "MP4 video",
                 IsAudio = false,
-                Args = new[] { "-f", "bv*+ba/b", "--merge-output-format", "mp4" },
+                Args = new[] { "-f", "bv*+ba/b", "--merge-output-format", "mp4", "-S", "res,vcodec:h264,acodec:aac" },
             });
         }
 
