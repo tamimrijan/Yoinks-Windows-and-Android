@@ -109,7 +109,12 @@ dark mode, and optional Material You colours from your wallpaper.
   </tr>
 </table>
 
-- **Share to Yoinks**: in YouTube, Instagram, TikTok or your browser, tap **Share → Yoinks**
+- **Share to Yoinks**: in YouTube, Facebook, Instagram, TikTok or your browser tap **Share → Yoinks**.
+  A sheet pops up over the app you're in: pick a quality or MP3 and keep watching
+- **Quick download**: tap Share, hold Yoinks, pick **Quick download**. A *Configure before download* sheet
+  pops up instantly: Audio or Video, a quality (Best, 1080p, 720p, 480p, 360p) or MP3 / M4A, and extras
+  (embed subtitles, embed thumbnail). It remembers your choices, or skip the sheet entirely in Settings
+- **Queue**: share several links in a row and they download one after another
 - **Downloads in the background** with progress and a Cancel button in your notifications
 - Saves to **Download/Yoinks**, so videos show up in Gallery and songs in your music app
 - Everything is built in: Python, yt-dlp, FFmpeg and QuickJS for YouTube. Nothing else to install

@@ -4,7 +4,10 @@
 
 - Native Android app built with Jetpack Compose and Material 3 Expressive
 - Same flow as Windows: paste a link, pick a resolution or MP3, download
-- Share to Yoinks from YouTube, Instagram, TikTok, the browser or any app
+- Share to Yoinks from any app: a quality sheet pops up over the app you're in
+- Quick download share option: an instant Configure before download sheet (Audio/Video, Best to 360p, MP3 or M4A,
+  embed subtitles and thumbnail), remembered for next time, or skipped entirely from Settings
+- Shared links queue up and download one after another, each with its own "Yoinked!" notification (tap to play)
 - Downloads keep going in the background, with progress and Cancel in notifications
 - Saves to Download/Yoinks so videos show up in Gallery and songs in music apps
 - Expressive design: cookie and sunny shapes, wavy progress ring, shape-morphing buttons,
