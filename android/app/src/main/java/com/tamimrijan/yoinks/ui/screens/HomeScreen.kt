@@ -572,7 +572,7 @@ private fun ShareTip() {
             Column {
                 Text("Even faster: share to Yoinks", style = MaterialTheme.typography.titleMedium, color = cs.onTertiaryContainer, fontWeight = FontWeight.SemiBold)
                 Text(
-                    "In YouTube, Instagram, TikTok or your browser, tap Share and pick Yoinks.",
+                    "In YouTube, Facebook, Instagram or TikTok tap Share → Yoinks to pick a quality, or hold Yoinks → Quick download.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = cs.onTertiaryContainer,
                 )

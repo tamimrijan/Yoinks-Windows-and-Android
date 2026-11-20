@@ -59,6 +59,41 @@ class Engine(
 
     val isBusy get() = _phase.value is Phase.Probing || _phase.value is Phase.Downloading
 
+    // ---------------------------------------------------------------- queue (share → quick download)
+
+    private data class Queued(val url: String, val options: QuickOptions)
+    private val queue = java.util.concurrent.ConcurrentLinkedQueue<Queued>()
+
+    private val _queued = MutableStateFlow(0)
+    /** How many shared links are waiting their turn. */
+    val queued: StateFlow<Int> = _queued.asStateFlow()
+
+    /** True while something is running or waiting: the background service stays up until this is false. */
+    val hasWork get() = isBusy || queue.isNotEmpty()
+
+    /**
+     * Quick download: fetch the info and start downloading straight away with [format], no questions.
+     * If a download is already running, the link waits in the queue. Returns false for a bad link.
+     */
+    fun quick(raw: String, options: QuickOptions = prefs.state.value.quick): Boolean {
+        val url = Platforms.extractUrl(raw)?.takeIf { Platforms.isProbablyUrl(it) } ?: return false
+        if (isBusy) {
+            queue.add(Queued(url, options))
+            _queued.value = queue.size
+        } else {
+            probe(url, options)
+        }
+        return true
+    }
+
+    private fun startNextQueued() {
+        if (isBusy) return
+        val next = queue.poll() ?: return
+        _queued.value = queue.size
+        probe(next.url, next.options)
+    }
+
+
     /** Unpacks Python, yt-dlp, FFmpeg and QuickJS on first launch (a few seconds), then stays ready. */
     fun start() {
         // after a failed start, a new attempt gets a fresh "ready" signal
@@ -105,33 +140,35 @@ class Engine(
         probe(url)
     }
 
-    private fun probe(url: String) {
+    private fun probe(url: String, auto: QuickOptions? = null) {
         cancelJob()
         if (_status.value is EngineStatus.Failed) start() // try the engine again instead of staying broken
         currentUrl = url
         val platform = Platforms.detect(url)
         _phase.value = Phase.Probing(url, platform, "warming up…")
+        val probeId = "probe-${System.nanoTime()}"
         job = scope.launch {
             try {
                 ready.await()
                 _phase.value = Phase.Probing(url, platform, "fetching video info…")
-                val id = "probe-${System.nanoTime()}"
-                currentProcess = id
+                currentProcess = probeId
                 val request = YoutubeDLRequest(url).apply {
                     addOption("-J")
                     addOption("--no-playlist")
                     addOption("--no-warnings")
                 }
-                val response = YoutubeDL.getInstance().execute(request, id)
+                val response = YoutubeDL.getInstance().execute(request, probeId)
                 val info = Choices.parseInfo(response.out)
                 infoJson?.delete()
                 infoJson = File(context.cacheDir, "info-${System.currentTimeMillis()}.json").also { it.writeText(response.out) }
-                _phase.value = Phase.Picking(url, platform, info, Choices.build(info))
+                val choices = Choices.build(info)
+                _phase.value = Phase.Picking(url, platform, info, choices)
+                if (auto != null) download(auto.toChoice())
             } catch (t: Throwable) {
                 if (t is YoutubeDL.CanceledException || t is kotlinx.coroutines.CancellationException) return@launch
                 _phase.value = Phase.Error(cleanError(t), canRetryDownload = false)
             } finally {
-                currentProcess = null
+                if (currentProcess == probeId) currentProcess = null
             }
         }
     }
@@ -267,7 +304,7 @@ class Engine(
             if (t is YoutubeDL.CanceledException) removePartials(destinations)
             throw t
         } finally {
-            currentProcess = null
+            if (currentProcess == id) currentProcess = null
         }
     }
 
@@ -301,6 +338,15 @@ class Engine(
         // remember the last download so "Try again" can repeat it
         scope.launch {
             phase.collect { if (it is Phase.Downloading) lastStarted = it; if (it is Phase.Picking) lastPicking = it }
+        }
+        // when one yoink ends (done, failed or cancelled), start the next shared link
+        scope.launch {
+            phase.collect {
+                if ((it is Phase.Done || it is Phase.Error || it is Phase.Input) && queue.isNotEmpty()) {
+                    kotlinx.coroutines.delay(600)
+                    startNextQueued()
+                }
+            }
         }
     }
 

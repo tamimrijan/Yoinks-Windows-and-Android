@@ -42,8 +42,11 @@ class DownloadService : LifecycleService() {
         }
         lifecycleScope.launch {
             var lastUpdate = 0L
-            YoinksApp.instance.engine.phase.collect { phase ->
-                if (phase !is Phase.Downloading && phase !is Phase.Probing) {
+            val engine = YoinksApp.instance.engine
+            kotlinx.coroutines.flow.combine(engine.phase, engine.queued) { p, _ -> p }.collect { phase ->
+                // stay up while something runs or waits in the queue (a shared link starting later
+                // couldn't restart this service from the background)
+                if (!engine.hasWork) {
                     stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                     return@collect
@@ -71,6 +74,12 @@ class DownloadService : LifecycleService() {
         private const val DONE_ID = 2
         private const val ACTION_CANCEL = "com.tamimrijan.yoinks.CANCEL"
 
+        /** Start right away (while the share sheet is still on screen, as Android requires). */
+        fun start(context: Context) {
+            if (YoinksApp.isRobolectric) return
+            runCatching { ContextCompat.startForegroundService(context, Intent(context, DownloadService::class.java)) }
+        }
+
         /** Starts the service when a download begins and posts a "Yoinked!" note when it ends. */
         fun watch(context: Context, engine: Engine) {
             if (YoinksApp.isRobolectric) return
@@ -84,11 +93,15 @@ class DownloadService : LifecycleService() {
                         }
                         is Phase.Done -> if (!MainActivity.isVisible && canNotify(app)) {
                             ensureChannel(app)
-                            NotificationManagerCompat.from(app).notify(DONE_ID, buildFinished(app, "Yoinked!", phase.entry.title))
+                            // one note per finished file, tap to play it
+                            NotificationManagerCompat.from(app).notify(
+                                DONE_ID + (phase.entry.filePath.hashCode() and 0xFFFF),
+                                buildFinished(app, "Yoinked!", phase.entry.title, phase.entry.filePath),
+                            )
                         }
                         is Phase.Error -> if (!MainActivity.isVisible && canNotify(app)) {
                             ensureChannel(app)
-                            NotificationManagerCompat.from(app).notify(DONE_ID, buildFinished(app, "Couldn't yoink that", phase.message))
+                            NotificationManagerCompat.from(app).notify(DONE_ID, buildFinished(app, "Couldn't yoink that", phase.message, null))
                         }
                         else -> Unit
                     }
@@ -132,6 +145,8 @@ class DownloadService : LifecycleService() {
             when (phase) {
                 is Phase.Downloading -> {
                     b.setContentTitle(phase.info.title)
+                    val waiting = YoinksApp.instance.engine.queued.value
+                    if (waiting > 0) b.setSubText("$waiting more waiting")
                     val p = phase.progress
                     when {
                         phase.processing -> b.setContentText(if (phase.choice.isAudio) "Converting to MP3…" else "Merging video and audio…").setProgress(0, 0, true)
@@ -153,13 +168,26 @@ class DownloadService : LifecycleService() {
             return b.build()
         }
 
-        private fun buildFinished(context: Context, title: String, text: String) =
-            NotificationCompat.Builder(context, CHANNEL)
+        private fun buildFinished(context: Context, title: String, text: String, filePath: String?): android.app.Notification {
+            val play = filePath?.let { path ->
+                runCatching {
+                    val f = java.io.File(path)
+                    val uri = androidx.core.content.FileProvider.getUriForFile(context, "${context.packageName}.files", f)
+                    val view = Intent(Intent.ACTION_VIEW).setDataAndType(uri, com.tamimrijan.yoinks.util.Files.mime(f))
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    PendingIntent.getActivity(context, path.hashCode(), view, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+                }.getOrNull()
+            }
+            return NotificationCompat.Builder(context, CHANNEL)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(text)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(text))
                 .setAutoCancel(true)
-                .setContentIntent(openApp(context))
+                .setContentIntent(play ?: openApp(context))
+                .apply { if (play != null) addAction(0, "Play", play) }
+                .addAction(0, "Open Yoinks", openApp(context))
                 .build()
+        }
     }
 }

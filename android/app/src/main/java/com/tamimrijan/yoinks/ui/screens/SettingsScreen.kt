@@ -27,6 +27,9 @@ import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Wifi
+import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.ButtonDefaults
@@ -155,6 +158,38 @@ fun SettingsScreen(bottomPadding: Dp) {
                     polygon = MaterialShapes.Clover8Leaf,
                     onClick = { app.prefs.update { it.copy(saveHistory = !it.saveHistory) } },
                 ) { Switch(checked = s.saveHistory, onCheckedChange = { v -> app.prefs.update { it.copy(saveHistory = v) } }) }
+            }
+        }
+
+        SectionLabel("Sharing")
+        SegmentedGroup {
+            row {
+                ListRow(
+                    title = "Quick download",
+                    subtitle = "In any app tap Share, hold Yoinks and pick Quick download. Choose Audio or Video, a quality and extras, then keep watching while it downloads.",
+                    icon = Icons.Rounded.Bolt,
+                    polygon = MaterialShapes.Cookie6Sided,
+                    iconContainer = MaterialTheme.colorScheme.tertiaryContainer,
+                    iconContent = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
+            }
+            row {
+                ListRow(
+                    title = "Ask before quick download",
+                    subtitle = if (s.quickAsk) "Shows the Configure before download sheet"
+                    else "Downloads straight away as ${s.quick.label}${if (s.quick.audio) "" else " video"} (your last choice)",
+                    icon = Icons.Rounded.Tune,
+                    polygon = MaterialShapes.Pill,
+                    onClick = { app.prefs.update { it.copy(quickAsk = !it.quickAsk) } },
+                ) { Switch(checked = s.quickAsk, onCheckedChange = { v -> app.prefs.update { it.copy(quickAsk = v) } }) }
+            }
+            row {
+                ListRow(
+                    title = "See every quality",
+                    subtitle = "Tap Share, then Yoinks: the full list of qualities with sizes pops up over the app you're in.",
+                    icon = Icons.Rounded.Share,
+                    polygon = MaterialShapes.Cookie9Sided,
+                )
             }
         }
 
